@@ -8,8 +8,8 @@ import { snapPointAnimation, Viewport } from '../utils';
 import { RoverPhoto } from './RoverPhoto';
 import { RoundedButton } from './RoundedButton';
 
-const CARD_WIDTH = Viewport.width - 32;
-const CARD_HEIGHT = CARD_WIDTH * (425 / 294);
+export const CARD_WIDTH = Viewport.width - 32;
+export const CARD_HEIGHT = Viewport.height / (484 / 328);
 const SNAP_POINT = [-Viewport.width, 0, Viewport.width];
 
 interface CardProps {
@@ -85,7 +85,7 @@ export const Card = React.memo<CardProps>((props) => {
   }, []);
 
   const cardStyle = useAnimatedStyle(() => {
-    const indentTop =  animatedIndex.value * (16 * 2.4)
+    const indentTop =  animatedIndex.value * (16 * 2.4);
     const scale = interpolate(
       animatedIndex.value,
       [0, 3],
@@ -104,7 +104,7 @@ export const Card = React.memo<CardProps>((props) => {
 
   return (
     <View 
-      style={[styles.container, StyleSheet.absoluteFill]} 
+      style={[StyleSheet.absoluteFill, styles.container]} 
       pointerEvents={index === 2 ? 'auto' : 'none'}
     > 
       <View style={styles.buttonsContainer}>
@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     zIndex: 1,
+    top: -26,
   },
   card: {
     width: CARD_WIDTH, 

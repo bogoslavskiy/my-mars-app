@@ -125,6 +125,7 @@ export const CardsScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   headerLeftButtonText: {
+    paddingLeft: 7,
     color: Colors.accentPrimary,
     fontSize: 16,
     fontWeight: '500',
@@ -145,7 +146,8 @@ const styles = StyleSheet.create({
   },
   statusContainer: {
     alignItems: 'center',
-    padding: 16
+    paddingHorizontal: 16,
+    paddingBottom: 16
   },
   statusText: {
     fontSize: 14,

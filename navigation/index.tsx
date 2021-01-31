@@ -26,7 +26,7 @@ export function RootNavigator() {
     >
       <Stack.Navigator
         screenOptions={{
-          headerLeftContainerStyle: { left: 0, paddingLeft: 16 },
+          headerLeftContainerStyle: { left: 9 },
           headerRightContainerStyle: { paddingRight: 16 },
           headerStyle: { elevation: 0 },
           headerBackTitle: ' ',
