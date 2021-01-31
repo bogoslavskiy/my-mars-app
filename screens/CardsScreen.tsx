@@ -16,7 +16,6 @@ export const CardsScreen: React.FC = () => {
   const { data, loading, loadMore, loadingMore } = useRoverImages();
   const { likePhoto, undoLikePhoto, photos: favoritesPhotos } = useFavoritesPhoto();
   
-  
   const safeArea = useSafeAreaInsets();
   const nav = useNavigation();
 

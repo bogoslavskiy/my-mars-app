@@ -6,7 +6,6 @@ import moment from 'moment';
 import { Text } from '../components/UI';
 import * as Types from '../api/types';
 
-
 interface RoverPhotoProps {
   item: Types.RoverPhoto;
   width: number;
