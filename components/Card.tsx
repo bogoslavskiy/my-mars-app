@@ -115,17 +115,21 @@ export const Card = React.memo<CardProps>((props) => {
     <View style={[styles.container, StyleSheet.absoluteFill]}>
       <PanGestureHandler onGestureEvent={onGestureEvent}>
         <Animated.View style={[styles.card, styles.shadow60, cardStyle]}> 
-          <LinearGradient
-            colors={['rgba(0, 0, 0, 0.8)', 'rgba(235,87,87,0)']}
-            style={styles.gradientContainer}
-          >
-            <View style={styles.innerCard}>
-              <Animated.Image
-                source={{ uri: item.img_src }}
-                style={[StyleSheet.absoluteFillObject, imageStyle]}
-              />
-            </View>
-          </LinearGradient>
+          <View style={styles.innerCard}>
+            <Animated.Image
+              source={{ uri: item.img_src }}
+              style={[styles.borderRadius, imageStyle]}
+            />
+            <LinearGradient
+              colors={['rgba(0, 0, 0, 0.8)', 'rgba(235,87,87,0)']}
+              style={[StyleSheet.absoluteFillObject, styles.borderRadius]}
+            > 
+            
+
+
+
+            </LinearGradient>
+          </View>
         </Animated.View>
       </PanGestureHandler>
     </View>
@@ -143,7 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     zIndex: 4
   },
-  gradientContainer: {  
+  borderRadius: {  
     flex: 1, 
     borderRadius: 8 
   },
