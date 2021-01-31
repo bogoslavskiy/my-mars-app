@@ -1,36 +1,9 @@
 import * as React from 'react';
 import axios from 'axios';
 import { Image } from 'react-native';
+import { RoverRequestResult } from './types';
 
 const API_KEY = 'HUELHT66Wk1iwDTcvnlrdayW7GEhCqTpdjis394J';
-
-export type Rover = {
-  id: number;
-  name: string;
-  landing_date: string;
-  launch_date: string;
-  status: string;
-};
-
-export type RoverCamera = {
-  id: number;
-  name: string;
-  rover_id: number;
-  full_name: string;
-};
-
-export type RoverPhoto = {
-  id: number;
-  sol: number;
-  camera: RoverCamera;
-  img_src: string;
-  earth_date: string;
-  rover: Rover;
-};
-
-export type RoverRequestResult = {
-  photos: RoverPhoto[];
-};
 
 export const useRoverImages = () => {
   const [initialize, setInitialize] = React.useState(false);

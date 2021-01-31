@@ -1,19 +1,32 @@
+import { useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoverImages } from '../api/RoverImages';
+import { RoverPhoto } from '../api/types';
 import { Card } from '../components/Card';
 import { ScreenHeader } from '../components/Layout/ScreenHeader';
 import { LoaderSpinner, Text } from '../components/UI';
+import { useFavoritesPhoto } from '../context/FavoritesPhotoContext';
 import { Colors } from '../theme/Colors';
 
 const COUNT_CARDS = 3;
 
 export const CardsScreen: React.FC = () => {
   const { data, loading, loadMore, loadingMore } = useRoverImages();
-  const safeArea = useSafeAreaInsets();
+  const { likePhoto, undoLikePhoto, photos: favoritesPhotos } = useFavoritesPhoto();
   
+  
+  const safeArea = useSafeAreaInsets();
+  const nav = useNavigation();
+
   const [currentPhotoIndex, setCurrentIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!loading && data && currentPhotoIndex > data.photos.length - 10) {
+      loadMore();
+    }
+  }, [data, currentPhotoIndex, loading]);
 
   const photos = React.useMemo(() => {
     return data?.photos.slice(currentPhotoIndex, currentPhotoIndex + COUNT_CARDS).reverse() || [];
@@ -23,31 +36,31 @@ export const CardsScreen: React.FC = () => {
     return data?.photos.slice(currentPhotoIndex).length || 0;
   }, [currentPhotoIndex, data]);
 
-  const handleSwipe = React.useCallback((direction: 'left' | 'right') => {
-    setCurrentIndex((prev) => prev + 1);
-
-    // setCards((cards) => {
-    //   return [...cards, {}]
-    // });
-  }, []);
-
-  React.useEffect(() => {
-    if (!loading && data && currentPhotoIndex > data.photos.length - 10) {
-      loadMore();
-    }
-  }, [data, currentPhotoIndex, loading]);
-
-  const handlePressUndo = React.useCallback(() => {
-    setCurrentIndex(Math.max(0, currentPhotoIndex - 1))
-  }, [currentPhotoIndex]);
-
   const isActiveUndo = React.useMemo(() => {
     return photos.length > 0 && currentPhotoIndex > 0;
   }, [photos, currentPhotoIndex]);
 
   const isActiveFavorites = React.useMemo(() => {
-    return photos.length > 0;
-  }, [photos.length]);
+    return photos.length > 0 && favoritesPhotos.length > 0;
+  }, [photos.length, favoritesPhotos.length]);
+
+  const handleSwipe = React.useCallback((direction: 'left' | 'right', photo: RoverPhoto) => {
+    setCurrentIndex((prev) => prev + 1);
+    if (direction === 'right') {
+      likePhoto(photo);
+    }
+  }, []);
+
+  const handlePressUndo = React.useCallback(() => {
+    const prevIndex = currentPhotoIndex - 1;
+    const photo = data?.photos[prevIndex];
+    
+    setCurrentIndex(Math.max(0, prevIndex));
+    
+    if (photo) {
+      undoLikePhoto(photo.id);
+    }
+  }, [currentPhotoIndex, data]);
 
   return (
     <View style={styles.container}>
@@ -55,6 +68,7 @@ export const CardsScreen: React.FC = () => {
         title="My Mars" 
         leftContent={() => (
           <TouchableOpacity 
+            hitSlop={{ top: 4, left: 4, right: 4, bottom: 4 }} 
             disabled={!isActiveUndo} 
             onPress={handlePressUndo}
           >
@@ -70,8 +84,9 @@ export const CardsScreen: React.FC = () => {
         )}
         rightContent={() => (
           <TouchableOpacity 
+            hitSlop={{ top: 4, left: 4, right: 4, bottom: 4 }} 
             disabled={!isActiveFavorites} 
-            onPress={() => {}}
+            onPress={() => nav.navigate('Favorites')}
           >
             <Image
               source={require('../assets/icons/ic-heart-24.png')}
@@ -94,7 +109,7 @@ export const CardsScreen: React.FC = () => {
               key={item.id}
               index={index}
               item={item}
-              onSwipe={(direction) => handleSwipe(direction)} 
+              onSwipe={(direction) => handleSwipe(direction, item)} 
             />
           ))
         }
@@ -108,7 +123,7 @@ export const CardsScreen: React.FC = () => {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   headerLeftButtonText: {

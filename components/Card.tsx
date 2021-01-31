@@ -1,23 +1,11 @@
 import * as React from 'react';
-import { StyleSheet, View, Image } from 'react-native';
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedGestureHandler,
-  useAnimatedStyle,
-  useDerivedValue,
-  useSharedValue,
-  withSpring,
-  runOnJS,
-  withTiming,
-} from "react-native-reanimated";
+import { StyleSheet, View } from 'react-native';
+import Animated, { Extrapolate, interpolate, useAnimatedGestureHandler, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring, runOnJS, withTiming } from "react-native-reanimated";
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
-import { LinearGradient } from 'expo-linear-gradient';
-import moment from 'moment';
 import { Colors } from '../theme/Colors';
-import { Text } from '../components/UI';
-import { RoverPhoto } from '../api/RoverImages';
+import * as Types from '../api/types';
 import { snapPointAnimation, Viewport } from '../utils';
+import { RoverPhoto } from './RoverPhoto';
 
 const CARD_WIDTH = Viewport.width - 32;
 const CARD_HEIGHT = CARD_WIDTH * (425 / 294);
@@ -26,7 +14,7 @@ const SNAP_POINT = [-Viewport.width, 0, Viewport.width];
 interface CardProps {
   onSwipe: (direction: 'left' | 'right') => void;
   index: number;
-  item: RoverPhoto;
+  item: Types.RoverPhoto;
 }
 
 export const Card = React.memo<CardProps>((props) => {
@@ -40,12 +28,6 @@ export const Card = React.memo<CardProps>((props) => {
 
   const translateY = useSharedValue(0);
   const translateX = useSharedValue(0);
-  const opacityImage = useSharedValue(0);
-
-  React.useEffect(() => {
-    opacityImage.value = 1;
-  }, []);
-
 
   // React.useEffect(() => {
   //   setTimeout(() => {
@@ -108,36 +90,15 @@ export const Card = React.memo<CardProps>((props) => {
     };
   });
 
-  const imageStyle = useAnimatedStyle(() => {
-    return { opacity: withTiming(opacityImage.value, { duration: 300 }) }
-  });
-
   return (
     <View style={[styles.container, StyleSheet.absoluteFill]}>
       <PanGestureHandler onGestureEvent={onGestureEvent}>
-        <Animated.View style={[styles.card,styles.shadow, cardStyle]}> 
-          <View style={styles.innerCard}>
-            <Animated.Image
-              source={{ uri: item.img_src }}
-              style={[styles.borderRadius, imageStyle]}
-            />
-            <LinearGradient
-              colors={['rgba(0, 0, 0, 0.8)', 'rgba(235,87,87,0)']}
-              style={[StyleSheet.absoluteFillObject, styles.borderRadius]}
-            > 
-              <View style={styles.roverInfoContainer}>
-                <Text style={styles.roverNameText}>
-                  {item.rover.name}
-                </Text>
-                <Text style={styles.roverDescriptionText}>
-                  {item.camera.full_name}
-                </Text>
-                <Text style={styles.roverDescriptionText}>
-                  {moment(item.earth_date).format('MMM DD, YYYY')}
-                </Text>
-              </View>
-            </LinearGradient>
-          </View>
+        <Animated.View style={[styles.card, cardStyle]}> 
+          <RoverPhoto
+            width={CARD_WIDTH}
+            height={CARD_HEIGHT} 
+            item={item}
+          />
         </Animated.View>
       </PanGestureHandler>
     </View>
@@ -146,24 +107,15 @@ export const Card = React.memo<CardProps>((props) => {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center'
+    alignItems: 'center',
+    zIndex: 1
   },
   card: {
     width: CARD_WIDTH, 
     height: CARD_HEIGHT,
     backgroundColor: Colors.backgroundPrimary,
     borderRadius: 8,
-    zIndex: 4
-  },
-  borderRadius: {  
-    flex: 1, 
-    borderRadius: 8 
-  },
-  innerCard: {
-    flex: 1, 
-    overflow: 'hidden', 
-  },
-  shadow: {
+    zIndex: 4,
     shadowColor: "#102027",
     shadowOffset: {
       width: 0,
@@ -173,21 +125,8 @@ const styles = StyleSheet.create({
     shadowRadius: 24,
     elevation: 16,
   },
-  roverInfoContainer: {
-    padding: 24
+  borderRadius: {  
+    flex: 1, 
+    borderRadius: 8 
   },
-  roverNameText: {
-    fontWeight: '500',
-    fontSize: 20,
-    lineHeight: 28,
-    letterSpacing: 0.15,
-    color: '#FFF',
-    paddingBottom: 4
-  },
-  roverDescriptionText: {
-    fontSize: 14,
-    lineHeight: 20,
-    letterSpacing: 0.75,
-    color: '#FFF'
-  }
 });

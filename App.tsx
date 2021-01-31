@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useCachedResources } from './hooks/useCachedResources';
 import { RootNavigator } from './navigation';
+import { FavoritesPhotoProvider } from './context/FavoritesPhotoContext';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -13,8 +14,10 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider>
-        <RootNavigator />
-        <StatusBar />
+        <FavoritesPhotoProvider>
+          <RootNavigator />
+          <StatusBar />
+        </FavoritesPhotoProvider>
       </SafeAreaProvider>
     );
   }
