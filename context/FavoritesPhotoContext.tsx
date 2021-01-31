@@ -21,10 +21,7 @@ export const FavoritesPhotoProvider: React.FC = ({ children }) => {
   }, []);
 
   const undoLikePhoto = React.useCallback((id: number) => {
-    setPhotos((existing) => {
-      console.log(existing, id);
-      return existing.filter((item) => item.id !== id)
-    });
+    setPhotos((existing) => existing.filter((item) => item.id !== id));
   }, []);
 
   return (

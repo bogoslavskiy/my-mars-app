@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import Animated, { Extrapolate, interpolate, useAnimatedGestureHandler, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring, runOnJS, withTiming } from "react-native-reanimated";
+import { StyleSheet, View, Image } from 'react-native';
+import Animated, { Extrapolate, interpolate, useAnimatedGestureHandler, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring, runOnJS, withTiming, Easing } from "react-native-reanimated";
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
 import { Colors } from '../theme/Colors';
 import * as Types from '../api/types';
 import { snapPointAnimation, Viewport } from '../utils';
 import { RoverPhoto } from './RoverPhoto';
+import { RoundedButton } from './RoundedButton';
 
 const CARD_WIDTH = Viewport.width - 32;
 const CARD_HEIGHT = CARD_WIDTH * (425 / 294);
@@ -28,16 +29,6 @@ export const Card = React.memo<CardProps>((props) => {
 
   const translateY = useSharedValue(0);
   const translateX = useSharedValue(0);
-
-  // React.useEffect(() => {
-  //   setTimeout(() => {
-  //     translateX.value = withTiming(375, {
-  //       duration: 500,
-  //       easing: Easing.out(Easing.exp),
-  //     });
-  //   }, 400)
-    
-  // }, []);
 
   const onGestureEvent = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent, 
@@ -72,6 +63,27 @@ export const Card = React.memo<CardProps>((props) => {
     },
   });
 
+  const [isActiveLike, setIsActiveLike] = React.useState(true);
+  const [isActiveDislike, setIsActiveDislike] = React.useState(true);
+  
+  const handlePressLike = React.useCallback(() => {
+    setIsActiveLike(false);
+    translateX.value = withTiming(
+      Viewport.width, 
+      { duration: 300 },
+      () => runOnJS(onSwipe)('right')
+    );
+  }, [onSwipe]);
+
+  const handlePressDislike = React.useCallback(() => {
+    setIsActiveDislike(false);
+    translateX.value = withTiming(
+      -Viewport.width, 
+      { duration: 300 },
+      () => runOnJS(onSwipe)('left')
+    );
+  }, []);
+
   const cardStyle = useAnimatedStyle(() => {
     const indentTop =  animatedIndex.value * (16 * 2.4)
     const scale = interpolate(
@@ -91,7 +103,35 @@ export const Card = React.memo<CardProps>((props) => {
   });
 
   return (
-    <View style={[styles.container, StyleSheet.absoluteFill]}>
+    <View 
+      style={[styles.container, StyleSheet.absoluteFill]} 
+      pointerEvents={index === 2 ? 'auto' : 'none'}
+    > 
+      <View style={styles.buttonsContainer}>
+        <View style={styles.button}>
+          <RoundedButton 
+            disabled={!isActiveDislike}
+            onPress={handlePressDislike}
+          >
+            <Image 
+              source={require('../assets/icons/ic-dislike-24.png')}
+              style={styles.dislikeIcon}
+            />
+          </RoundedButton>
+        </View>
+        <View style={styles.button}>
+          <RoundedButton
+            disabled={!isActiveLike}
+            onPress={handlePressLike}
+            style={{ backgroundColor: Colors.accentPrimary }}
+          >
+            <Image 
+              source={require('../assets/icons/ic-like-24.png')}
+              style={styles.likeIcon}
+            />
+          </RoundedButton>
+        </View>
+      </View>
       <PanGestureHandler onGestureEvent={onGestureEvent}>
         <Animated.View style={[styles.card, cardStyle]}> 
           <RoverPhoto
@@ -108,7 +148,7 @@ export const Card = React.memo<CardProps>((props) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    zIndex: 1
+    zIndex: 1,
   },
   card: {
     width: CARD_WIDTH, 
@@ -123,10 +163,33 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.16,
     shadowRadius: 24,
-    elevation: 16,
   },
   borderRadius: {  
     flex: 1, 
     borderRadius: 8 
   },
+  buttonsContainer: {
+    position: 'absolute', 
+    top: CARD_HEIGHT + (15 * 3), 
+    width: CARD_WIDTH,
+    flexDirection: 'row', 
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    zIndex: 5,
+  },
+  button: {
+    alignItems: 'center',
+    width: CARD_WIDTH / 2,
+    zIndex: 5
+  },
+  dislikeIcon: {
+    tintColor: '#FFF',
+    position: 'relative',
+    top: 2,
+  },
+  likeIcon: {
+    tintColor: '#FFF',
+    position: 'relative',
+    bottom: 2,
+  }
 });

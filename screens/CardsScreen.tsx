@@ -98,7 +98,6 @@ export const CardsScreen: React.FC = () => {
           </TouchableOpacity>
         )}
       />
-
       <View style={styles.cardsContainer}>
         {loading ? (
           <LoaderSpinner />
