@@ -12,6 +12,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../theme/Colors';
 import { Text } from '../components/UI';
 import { RoverPhoto } from '../api/RoverImages';
@@ -38,6 +39,12 @@ export const Card = React.memo<CardProps>((props) => {
 
   const translateY = useSharedValue(0);
   const translateX = useSharedValue(0);
+  const opacityImage = useSharedValue(index === 0 ? 0 : 1);
+
+  React.useEffect(() => {
+    opacityImage.value = 1;
+  }, []);
+
 
   // React.useEffect(() => {
   //   setTimeout(() => {
@@ -100,16 +107,25 @@ export const Card = React.memo<CardProps>((props) => {
     };
   });
 
+  const imageStyle = useAnimatedStyle(() => {
+    return { opacity: withTiming(opacityImage.value, { duration: 500 }) }
+  });
+
   return (
     <View style={[styles.container, StyleSheet.absoluteFill]}>
       <PanGestureHandler onGestureEvent={onGestureEvent}>
-        <Animated.View style={[styles.card, styles.shadow40, cardStyle]}> 
-          <View style={styles.innerCard}>
-            <Image
-              source={{ uri: item.img_src }}
-              style={[StyleSheet.absoluteFillObject]}
-            />
-          </View>
+        <Animated.View style={[styles.card, styles.shadow60, cardStyle]}> 
+          <LinearGradient
+            colors={['rgba(0, 0, 0, 0.8)', 'rgba(235,87,87,0)']}
+            style={styles.gradientContainer}
+          >
+            <View style={styles.innerCard}>
+              <Animated.Image
+                source={{ uri: item.img_src }}
+                style={[StyleSheet.absoluteFillObject, imageStyle]}
+              />
+            </View>
+          </LinearGradient>
         </Animated.View>
       </PanGestureHandler>
     </View>
@@ -124,13 +140,16 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH, 
     height: CARD_HEIGHT,
     backgroundColor: Colors.backgroundPrimary,
-    borderRadius: 20
+    borderRadius: 8,
+    zIndex: 4
+  },
+  gradientContainer: {  
+    flex: 1, 
+    borderRadius: 8 
   },
   innerCard: {
     flex: 1, 
     overflow: 'hidden', 
-    borderRadius: 8, 
-    backgroundColor: Colors.backgroundPrimary 
   },
   shadow20: {
     shadowColor: "#102027",
