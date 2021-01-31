@@ -13,12 +13,13 @@ import Animated, {
 } from "react-native-reanimated";
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
 import { LinearGradient } from 'expo-linear-gradient';
+import moment from 'moment';
 import { Colors } from '../theme/Colors';
 import { Text } from '../components/UI';
 import { RoverPhoto } from '../api/RoverImages';
 import { snapPointAnimation, Viewport } from '../utils';
 
-const CARD_WIDTH = Viewport.width * 0.96;
+const CARD_WIDTH = Viewport.width - 32;
 const CARD_HEIGHT = CARD_WIDTH * (425 / 294);
 const SNAP_POINT = [-Viewport.width, 0, Viewport.width];
 
@@ -39,7 +40,7 @@ export const Card = React.memo<CardProps>((props) => {
 
   const translateY = useSharedValue(0);
   const translateX = useSharedValue(0);
-  const opacityImage = useSharedValue(index === 0 ? 0 : 1);
+  const opacityImage = useSharedValue(0);
 
   React.useEffect(() => {
     opacityImage.value = 1;
@@ -90,11 +91,11 @@ export const Card = React.memo<CardProps>((props) => {
   });
 
   const cardStyle = useAnimatedStyle(() => {
-    const indentTop =  animatedIndex.value * (0.5 * 100) 
+    const indentTop =  animatedIndex.value * (16 * 2.4)
     const scale = interpolate(
       animatedIndex.value,
-      [3, 0],
-      [1, 0.8],
+      [0, 3],
+      [0.81, 1.09],
       Extrapolate.CLAMP
     );
 
@@ -108,13 +109,13 @@ export const Card = React.memo<CardProps>((props) => {
   });
 
   const imageStyle = useAnimatedStyle(() => {
-    return { opacity: withTiming(opacityImage.value, { duration: 500 }) }
+    return { opacity: withTiming(opacityImage.value, { duration: 300 }) }
   });
 
   return (
     <View style={[styles.container, StyleSheet.absoluteFill]}>
       <PanGestureHandler onGestureEvent={onGestureEvent}>
-        <Animated.View style={[styles.card, styles.shadow60, cardStyle]}> 
+        <Animated.View style={[styles.card,styles.shadow, cardStyle]}> 
           <View style={styles.innerCard}>
             <Animated.Image
               source={{ uri: item.img_src }}
@@ -124,10 +125,17 @@ export const Card = React.memo<CardProps>((props) => {
               colors={['rgba(0, 0, 0, 0.8)', 'rgba(235,87,87,0)']}
               style={[StyleSheet.absoluteFillObject, styles.borderRadius]}
             > 
-            
-
-
-
+              <View style={styles.roverInfoContainer}>
+                <Text style={styles.roverNameText}>
+                  {item.rover.name}
+                </Text>
+                <Text style={styles.roverDescriptionText}>
+                  {item.camera.full_name}
+                </Text>
+                <Text style={styles.roverDescriptionText}>
+                  {moment(item.earth_date).format('MMM DD, YYYY')}
+                </Text>
+              </View>
             </LinearGradient>
           </View>
         </Animated.View>
@@ -155,27 +163,7 @@ const styles = StyleSheet.create({
     flex: 1, 
     overflow: 'hidden', 
   },
-  shadow20: {
-    shadowColor: "#102027",
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  shadow40: {
-    shadowColor: "#102027",
-    shadowOffset: {
-      width: 0,
-      height: 12,
-    },
-    shadowOpacity: 0.12,
-    shadowRadius: 20,
-    elevation: 12,
-  },
-  shadow60: {
+  shadow: {
     shadowColor: "#102027",
     shadowOffset: {
       width: 0,
@@ -184,5 +172,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.16,
     shadowRadius: 24,
     elevation: 16,
+  },
+  roverInfoContainer: {
+    padding: 24
+  },
+  roverNameText: {
+    fontWeight: '500',
+    fontSize: 20,
+    lineHeight: 28,
+    letterSpacing: 0.15,
+    color: '#FFF',
+    paddingBottom: 4
+  },
+  roverDescriptionText: {
+    fontSize: 14,
+    lineHeight: 20,
+    letterSpacing: 0.75,
+    color: '#FFF'
   }
 });

@@ -12,7 +12,6 @@ const COUNT_CARDS = 3;
 export const CardsScreen: React.FC = () => {
   const { data, loading } = useRoverImages();
   const safeArea = useSafeAreaInsets();
-  const isActiveButtons = true;
   
   const [currentPhotoIndex, setCurrentIndex] = React.useState(0);
 
@@ -32,19 +31,31 @@ export const CardsScreen: React.FC = () => {
     // });
   }, []);
 
+  const handlePressUndo = React.useCallback(() => {
+    setCurrentIndex(Math.max(0, currentPhotoIndex - 1))
+  }, [currentPhotoIndex]);
+
+  const isActiveUndo = React.useMemo(() => {
+    return photos.length > 0 && currentPhotoIndex > 0;
+  }, [photos, currentPhotoIndex]);
+
+  const isActiveFavorites = React.useMemo(() => {
+    return photos.length > 0;
+  }, [photos.length]);
+
   return (
     <View style={styles.container}>
       <ScreenHeader 
         title="My Mars" 
         leftContent={() => (
           <TouchableOpacity 
-            disabled={!isActiveButtons} 
-            onPress={() => {}}
+            disabled={!isActiveUndo} 
+            onPress={handlePressUndo}
           >
             <Text 
               style={[
                 styles.headerLeftButtonText,
-                !isActiveButtons && styles.headerLeftButtonInactive
+                !isActiveUndo && styles.headerLeftButtonInactive
               ]}
             >
               Undo
@@ -53,13 +64,13 @@ export const CardsScreen: React.FC = () => {
         )}
         rightContent={() => (
           <TouchableOpacity 
-            disabled={!isActiveButtons} 
+            disabled={!isActiveFavorites} 
             onPress={() => {}}
           >
             <Image
               source={require('../assets/icons/ic-heart-24.png')}
               style={{ 
-                tintColor: isActiveButtons 
+                tintColor: isActiveFavorites 
                   ? Colors.accentPrimary 
                   : Colors.inactive
               }}

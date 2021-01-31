@@ -27,7 +27,8 @@ export function RootNavigator() {
       <Stack.Navigator
         screenOptions={{
           headerLeftContainerStyle: { paddingLeft: 16 },
-          headerRightContainerStyle: { paddingRight: 16 }
+          headerRightContainerStyle: { paddingRight: 16 },
+          headerStyle: { elevation: 0 }
         }}
       >
         <Stack.Screen name="Cards" component={CardsScreen} />
