@@ -10,7 +10,7 @@ import { Colors } from '../theme/Colors';
 const COUNT_CARDS = 3;
 
 export const CardsScreen: React.FC = () => {
-  const { data, loading } = useRoverImages();
+  const { data, loading, loadMore, loadingMore } = useRoverImages();
   const safeArea = useSafeAreaInsets();
   
   const [currentPhotoIndex, setCurrentIndex] = React.useState(0);
@@ -30,6 +30,12 @@ export const CardsScreen: React.FC = () => {
     //   return [...cards, {}]
     // });
   }, []);
+
+  React.useEffect(() => {
+    if (!loading && data && currentPhotoIndex > data.photos.length - 10) {
+      loadMore();
+    }
+  }, [data, currentPhotoIndex, loading]);
 
   const handlePressUndo = React.useCallback(() => {
     setCurrentIndex(Math.max(0, currentPhotoIndex - 1))
@@ -96,7 +102,7 @@ export const CardsScreen: React.FC = () => {
       <View style={[styles.statusContainer, { marginBottom: safeArea.bottom }]}>
         <TouchableOpacity onPress={() => setCurrentIndex(0)}>
           <Text style={styles.statusText}>
-            {data ? `${countPhotos} Cards` : 'Downloading'}
+            {loading || loadingMore ? 'Downloading' : `${countPhotos} Cards`}
           </Text>
         </TouchableOpacity>
       </View>

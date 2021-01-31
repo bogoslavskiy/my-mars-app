@@ -35,32 +35,47 @@ export type RoverRequestResult = {
 export const useRoverImages = () => {
   const [initialize, setInitialize] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [loadingMore, setLoadingMore] = React.useState(false);
   const [page, setPage] = React.useState(1);
   const [data, setData] = React.useState<RoverRequestResult | undefined>();
 
   const load = React.useCallback(async (page: number = 1) => {
-    setLoading(true);
-
     const url = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=${API_KEY}&page=${page}`;
     const response = await axios.get<RoverRequestResult>(url);
-    const data = response.data || [];
+    const data = response.data;
 
-    const images = data.photos.map((item) => {
-      return Image.prefetch(item.img_src);
-    });
+    if (data) {
+      const images = data.photos.map((item) => {
+        return Image.prefetch(item.img_src);
+      });
 
-    await Promise.all([...images]);
+      await Promise.all([...images]);
+    }
     
-    setLoading(false);
-    setData(data);
+    setPage(page);
+    setData((existing) => ({
+      photos: [...existing?.photos || [], ...data.photos]
+    }));
   }, []);
 
+  const loadMore = React.useCallback(async () => {
+    setLoadingMore(true);
+    await load(page + 1);
+    setLoadingMore(false);
+  }, [page]);
+
   React.useEffect(() => {
-    if (!initialize) {
-      load();
+    const startLoadingData = async () => {
+      setLoading(true);
+
+      await load();
+
+      setLoading(false);
       setInitialize(true);
     }
+
+    !initialize && startLoadingData();
   }, [initialize, load]);
 
-  return { load, data, loading };
+  return { load, data, loading, loadMore, loadingMore };
 };
