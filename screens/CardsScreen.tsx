@@ -22,10 +22,10 @@ export const CardsScreen: React.FC = () => {
   const [currentPhotoIndex, setCurrentIndex] = React.useState(0);
 
   React.useEffect(() => {
-    if (!loading && data && currentPhotoIndex > data.photos.length - 10) {
+    if (!loadingMore && data && currentPhotoIndex > data.photos.length - 10) {
       loadMore();
     }
-  }, [data, currentPhotoIndex, loading]);
+  }, [data, currentPhotoIndex, loadingMore]);
 
   const photos = React.useMemo(() => {
     return data?.photos.slice(currentPhotoIndex, currentPhotoIndex + COUNT_CARDS).reverse() || [];
