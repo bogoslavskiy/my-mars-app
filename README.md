@@ -1,7 +1,10 @@
 # React Native Mars App 
 
 Implementing a swipe animation like in a tinder app using `react-native-reanimated` version 2. 
+<br>
 Also implemented infinite data loading
+<br>
+Images from https://api.nasa.gov/
 
 
 ## Demo
