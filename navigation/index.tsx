@@ -6,6 +6,7 @@ import { Colors } from '../theme/Colors';
 
 import { CardsScreen } from '../screens/CardsScreen';
 import { FavoritesScreen } from '../screens/FavoritesScreen';
+import { isIOS } from '../utils';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -26,7 +27,7 @@ export function RootNavigator() {
     >
       <Stack.Navigator
         screenOptions={{
-          headerLeftContainerStyle: { left: 9 },
+          headerLeftContainerStyle: { left: isIOS ? 9 : 0 },
           headerRightContainerStyle: { paddingRight: 16 },
           headerStyle: { elevation: 0 },
           headerBackTitle: ' ',

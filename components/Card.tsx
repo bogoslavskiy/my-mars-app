@@ -4,13 +4,13 @@ import Animated, { Extrapolate, interpolate, useAnimatedGestureHandler, useAnima
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
 import { Colors } from '../theme/Colors';
 import * as Types from '../api/types';
-import { snapPointAnimation, Viewport } from '../utils';
+import { SCREEN_WIDTH, snapPointAnimation, Viewport } from '../utils';
 import { RoverPhoto } from './RoverPhoto';
 import { RoundedButton } from './RoundedButton';
 
-export const CARD_WIDTH = Viewport.width - 32;
+export const CARD_WIDTH = SCREEN_WIDTH - 32;
 export const CARD_HEIGHT = Viewport.height / (484 / 328);
-const SNAP_POINT = [-Viewport.width, 0, Viewport.width];
+const SNAP_POINT = [-SCREEN_WIDTH, 0, SCREEN_WIDTH];
 
 interface CardProps {
   onSwipe: (direction: 'left' | 'right') => void;
@@ -69,7 +69,7 @@ export const Card = React.memo<CardProps>((props) => {
   const handlePressLike = React.useCallback(() => {
     setIsActiveLike(false);
     translateX.value = withTiming(
-      Viewport.width, 
+      SCREEN_WIDTH, 
       { duration: 300 },
       () => runOnJS(onSwipe)('right')
     );
@@ -78,7 +78,7 @@ export const Card = React.memo<CardProps>((props) => {
   const handlePressDislike = React.useCallback(() => {
     setIsActiveDislike(false);
     translateX.value = withTiming(
-      -Viewport.width, 
+      -SCREEN_WIDTH, 
       { duration: 300 },
       () => runOnJS(onSwipe)('left')
     );
@@ -187,10 +187,14 @@ const styles = StyleSheet.create({
     tintColor: '#FFF',
     position: 'relative',
     top: 2,
+    width: 24,
+    height: 22
   },
   likeIcon: {
     tintColor: '#FFF',
     position: 'relative',
     bottom: 2,
+    width: 24,
+    height: 22
   }
 });

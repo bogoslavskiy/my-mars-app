@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
+import { isIOS } from '../../utils';
 import { Text } from '../UI';
 
 interface HeaderTitleProps {
@@ -14,6 +15,7 @@ export const HeaderTitle = React.memo<HeaderTitleProps>((props) => (
 
 const styles = StyleSheet.create({
   titleText: {
+    textAlign: 'center',
     fontSize: 18,
     fontWeight: '500',
     lineHeight: 24,

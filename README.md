@@ -24,3 +24,7 @@ $ yarn install
 $ yarn start
 ```
 
+## Run on web
+```bash
+$ yarn web
+```

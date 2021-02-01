@@ -3,9 +3,9 @@ import { View, FlatList, StyleSheet } from 'react-native';
 import { ScreenHeader } from '../components/Layout/ScreenHeader';
 import { RoverPhoto } from '../components/RoverPhoto';
 import { useFavoritesPhoto } from '../context/FavoritesPhotoContext';
-import { Viewport } from '../utils';
+import { Viewport, SCREEN_WIDTH } from '../utils';
 
-const CARD_WIDTH = Viewport.width - 32;
+const CARD_WIDTH = SCREEN_WIDTH - 32;
 const CARD_HEIGTH = Viewport.height / 1.5;
 
 export const FavoritesScreen: React.FC = () => {

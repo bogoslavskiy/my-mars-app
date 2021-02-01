@@ -1,6 +1,13 @@
-import { Dimensions, Image } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 
 export const Viewport = Dimensions.get('window');
+
+export const MAX_SCREEN_WIDTH = 400;
+export const SCREEN_WIDTH = Math.min(Viewport.width, MAX_SCREEN_WIDTH);
+
+export const isWeb = Platform.OS === 'web';
+export const isIOS = Platform.OS === 'ios';
+export const isAndroid = Platform.OS === 'android';
 
 export const snapPointAnimation = (
   value: number,

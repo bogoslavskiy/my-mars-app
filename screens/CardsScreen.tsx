@@ -9,6 +9,7 @@ import { ScreenHeader } from '../components/Layout/ScreenHeader';
 import { LoaderSpinner, Text } from '../components/UI';
 import { useFavoritesPhoto } from '../context/FavoritesPhotoContext';
 import { Colors } from '../theme/Colors';
+import { isIOS } from '../utils';
 
 const COUNT_CARDS = 3;
 
@@ -90,6 +91,8 @@ export const CardsScreen: React.FC = () => {
             <Image
               source={require('../assets/icons/ic-heart-24.png')}
               style={{ 
+                width: 24,
+                height: 24,
                 tintColor: isActiveFavorites 
                   ? Colors.accentPrimary 
                   : Colors.inactive
@@ -125,7 +128,7 @@ export const CardsScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   headerLeftButtonText: {
-    paddingLeft: 7,
+    paddingLeft: isIOS ? 7 : 16,
     color: Colors.accentPrimary,
     fontSize: 16,
     fontWeight: '500',
